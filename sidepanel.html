@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Gemini Panel</title>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="sidepanel.css">
+</head>
+<body>
+  
+  <nav class="toolbar">
+    <button id="btn-settings" class="icon-btn" title="Ustawienia i Szablony">
+      <i class="fas fa-cog"></i>
+    </button>
+
+    <div class="logo-area" title="Gemini Pro Panel">
+      <i class="fas fa-sparkles"></i> <span>Gemini</span>
+    </div>
+    
+    <div class="actions">
+      
+      <button id="btn-detach" class="icon-btn" title="Otwórz w osobnym oknie">
+        <i class="fas fa-external-link-alt"></i>
+      </button>
+
+      <button id="btn-gems" class="icon-btn" title="Zarządzaj Gemami">
+        <i class="fas fa-gem"></i>
+      </button>
+
+      <button id="btn-notebook" class="icon-btn" title="Notatnik (Zapisz kontekst)">
+        <i class="fas fa-book"></i>
+      </button>
+
+      <button id="btn-architect" class="icon-btn" title="Prompt Architect (Ulepszanie Promptów)">
+        <i class="fas fa-star"></i>
+      </button>
+
+      <button id="btn-cluster" class="icon-btn" title="Tab Cluster (Analiza wielu kart)">
+        <i class="fas fa-layer-group"></i>
+      </button>
+
+      <button id="btn-context" class="icon-btn" title="Pobierz tekst (Zaznaczenie lub Całość)">
+        <i class="fas fa-file-alt"></i>
+      </button>
+
+      <button id="btn-screenshot" class="icon-btn" title="Szybki zrzut widocznego ekranu">
+        <i class="fas fa-camera"></i>
+      </button>
+
+      <button id="btn-crop" class="icon-btn" title="Wycinek ekranu (Zaznacz obszar)">
+        <i class="fas fa-crop-simple"></i>
+      </button>
+
+      <button id="btn-zen-mode" class="icon-btn" title="Tryb Zen (Ukryj pasek)">
+        <i class="fas fa-chevron-left"></i>
+      </button>
+
+    </div>
+  </nav>
+
+  <div id="toast-container"></div>
+
+  <div id="settings-modal" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Konfiguracja</h3>
+        <button id="btn-close-settings" class="close-icon"><i class="fas fa-times"></i></button>
+      </div>
+      
+      <div class="modal-body">
+          <div class="add-template-section" style="border-bottom: 1px solid var(--border-color); padding-bottom: 15px; gap: 8px;">
+            <strong style="display:block; color: var(--text-color); margin-bottom: 5px;">Ustawienia AI (Helper)</strong>
+            
+            <label style="font-size: 12px; color: var(--text-muted); display:block; margin-bottom: 4px;">Dostawca AI:</label>
+            <select id="setting-ai-provider">
+                <option value="gemini">Gemini</option>
+                <option value="duck">Duck AI</option>
+            </select>
+
+            <label style="font-size: 12px; color: var(--text-muted); display:block; margin-top: 8px; margin-bottom: 4px;">Klucz API (OpenRouter):</label>
+            <div class="input-group">
+                <input type="password" id="setting-api-key" placeholder="sk-or-v1-..." style="flex-grow: 1;" autocomplete="off">
+                <button id="btn-toggle-key" class="icon-btn" title="Pokaż/Ukryj"><i class="fas fa-eye"></i></button>
+            </div>
+
+            <label style="font-size: 12px; color: var(--text-muted); display:block; margin-top: 8px; margin-bottom: 4px;">Model pomocniczy:</label>
+            <select id="setting-model-select">
+                <option value="">Ładowanie modeli...</option>
+            </select>
+            
+            <div style="font-size: 11px; color: var(--text-muted); opacity: 0.7; margin-top: 4px; line-height: 1.4;">
+                Wybierz model, który będzie używany do zadań w tle (ulepszanie promptów, streszczanie w notatniku itp.).
+            </div>
+          </div>
+
+          <div class="add-template-section" style="border-bottom: 1px solid var(--border-color); padding-bottom: 15px; gap: 8px;">
+            <strong style="display:block; color: var(--text-color); margin-bottom: 5px;">Ghost Writer</strong>
+            
+            <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; color: var(--text-muted); font-size: 13px; user-select: none;">
+                <input type="checkbox" id="setting-auto-submit" style="width: auto; margin: 0; cursor: pointer;">
+                <span>Auto-Submit (Wyślij natychmiast)</span>
+            </label>
+            <div style="font-size: 11px; color: var(--text-muted); opacity: 0.7; margin-left: 24px;">
+                Jeśli zaznaczone, wtyczka automatycznie kliknie "Wyślij" po wpisaniu tekstu.
+            </div>
+          </div>
+
+          <div class="add-template-section">
+            <strong style="display:block; color: var(--text-color); margin-bottom: 5px;">Edytor Szablonów</strong>
+            <input type="text" id="new-template-name" placeholder="Nazwa (np. Tłumacz na Ang)" autocomplete="off">
+            
+            <div class="textarea-wrapper">
+                <textarea id="new-template-content" placeholder="Wpisz prompt."></textarea>
+                <button id="btn-improve-prompt" class="icon-btn" title="Ulepsz prompt przy pomocy AI"><i class="fas fa-magic"></i></button>
+            </div>
+            
+            <div class="variables-legend" style="font-size: 11px; color: var(--text-muted); margin-bottom: 12px; line-height: 1.6;">
+              <strong style="display:block; margin-bottom:4px; color: var(--text-color);">Dostępne zmienne:</strong>
+              <code style="color: var(--primary-color); background: rgba(124,77,255,0.1); padding: 2px 5px; border-radius: 4px;">{text}</code> - Treść
+              <code style="color: var(--primary-color); background: rgba(124,77,255,0.1); padding: 2px 5px; border-radius: 4px;">{url}</code> - Link
+              <code style="color: var(--primary-color); background: rgba(124,77,255,0.1); padding: 2px 5px; border-radius: 4px;">{title}</code> - Tytuł
+              <br>
+              <code style="color: var(--primary-color); background: rgba(124,77,255,0.1); padding: 2px 5px; border-radius: 4px;">{lang}</code> - Język
+              <code style="color: var(--primary-color); background: rgba(124,77,255,0.1); padding: 2px 5px; border-radius: 4px;">{date}</code> - Data
+            </div>
+
+            <div style="display: flex; gap: 10px; align-items: center; width: 100%;">
+                <button id="btn-add-template" class="action-btn" style="flex-grow: 1;">Dodaj Szablon</button>
+                <button id="btn-cancel-edit" class="text-btn" style="display: none; color: #ff4d4d;">Anuluj</button>
+            </div>
+          </div>
+
+          <div class="templates-list-container">
+            <ul id="templates-list"></ul>
+          </div>
+      </div>
+      
+      <div class="modal-footer">
+        <button id="btn-reset-defaults" class="text-btn">Przywróć domyślne</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="notebook-modal" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Zapisane Snapshoty</h3>
+        <button id="btn-close-notebook" class="close-icon"><i class="fas fa-times"></i></button>
+      </div>
+      
+      <div class="modal-body">
+          <div id="notebook-list-view">
+              <div class="add-template-section">
+                <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+                  <input type="text" id="note-title" placeholder="Tytuł snapshotu (opcjonalnie, AI może wygenerować)..." autocomplete="off" style="flex-grow: 1;">
+                  <button id="btn-paste-note" class="icon-action-btn" title="Wklej ze schowka"><i class="fas fa-paste"></i></button>
+                </div>
+                
+                <textarea id="note-content" placeholder="Tutaj wklej treść rozmowy, którą chcesz zachować..." rows="4"></textarea>
+                
+                <div style="display: flex; gap: 10px; align-items: center; width: 100%;">
+                    <button id="btn-save-note" class="action-btn" style="flex-grow: 1;">Zapisz Snapshot</button>
+                </div>
+              </div>
+
+              <div class="add-template-section" style="border-top: 1px solid var(--border-color); padding-top: 15px; padding-bottom: 0;">
+                 <input type="text" id="notebook-search" placeholder="Szukaj notatek i tagów..." autocomplete="off">
+              </div>
+
+              <div class="templates-list-container" style="padding-top: 10px;">
+                <ul id="notebook-list"></ul>
+              </div>
+          </div>
+
+          <div id="notebook-editor-view" class="hidden">
+              <div class="editor-toolbar">
+                  <button id="btn-editor-back" class="icon-action-btn" title="Wróć do listy">
+                    <i class="fas fa-arrow-left"></i>
+                  </button>
+                  
+                  <button id="btn-toggle-pin" class="icon-action-btn" title="Przypnij notatkę">
+                    <i class="fas fa-thumbtack"></i>
+                  </button>
+              </div>
+
+              <div class="editor-content-area">
+                  <input type="text" id="edit-note-title" placeholder="Tytuł notatki (kliknij, aby edytować)" autocomplete="off" class="editor-title-input">
+              
+                  <div class="editor-tab-container">
+                      <div class="tab-button-group">
+                          <button id="btn-tab-edit" class="tab-button active" data-tab="edit">Edycja</button>
+                          <button id="btn-tab-preview" class="tab-button" data-tab="preview">Podgląd Markdown</button>
+                      </div>
+                      
+                      <textarea id="edit-note-content" placeholder="Treść notatki w formacie Markdown..." rows="10" class="editor-textarea"></textarea>
+                      
+                      <div id="edit-note-preview" class="markdown-preview hidden">
+                          <p class="text-muted" style="text-align: center; margin-top: 20px;">Podgląd zostanie wyrenderowany po przełączeniu.</p>
+                      </div>
+                  </div>
+              </div>
+
+              <div class="editor-actions">
+                  <button id="btn-editor-save" class="action-btn">Zapisz Zmiany</button>
+                  <button id="btn-editor-cancel" class="text-btn">Anuluj Edycję</button>
+              </div>
+          </div>
+
+      </div>
+      
+      <div class="modal-footer">
+        <span style="font-size: 11px; color: var(--text-muted); text-align: center;">
+            <span id="notebook-footer-list">Kliknij na pozycję, aby skopiować treść.</span>
+            <span id="notebook-footer-editor" class="hidden">Ostatnia modyfikacja: <span id="last-modified-date"></span></span>
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <div id="architect-modal" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3><i class="fas fa-star" style="color: #FFD700; margin-right: 8px;"></i> Prompt Architect</h3>
+        <button id="btn-close-architect" class="close-icon"><i class="fas fa-times"></i></button>
+      </div>
+      
+      <div class="modal-body">
+          <div class="add-template-section" style="border: none;">
+            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 15px; line-height: 1.4;">
+              Wpisz swój pomysł, a AI przebuduje go w profesjonalny prompt.
+            </p>
+            
+            <label style="display:block; color: var(--text-color); margin-bottom: 6px; font-size: 12px; font-weight: 600;">Twój pomysł (Draft):</label>
+            <textarea id="architect-input" placeholder="np. Napisz kod w Pythonie do obsługi CSV..." rows="3" style="margin-bottom: 10px;"></textarea>
+            
+            <button id="btn-architect-improve" class="action-btn" style="width: 100%; margin-bottom: 20px; background: linear-gradient(135deg, #FFD700, #FFA500); color: #000;">
+               <i class="fas fa-magic"></i> Ulepsz Prompt
+            </button>
+
+            <label style="display:block; color: var(--text-color); margin-bottom: 6px; font-size: 12px; font-weight: 600;">Wynik (Profesjonalny Prompt):</label>
+            <div class="textarea-wrapper" style="margin-bottom: 15px;">
+                <textarea id="architect-result" placeholder="Tutaj pojawi się ulepszony prompt..." rows="6"></textarea>
+            </div>
+
+            <div style="display: flex; gap: 10px; align-items: center; width: 100%;">
+                <button id="btn-architect-send" class="action-btn" style="flex-grow: 1;">
+                   <i class="fas fa-paper-plane"></i> Wyślij do Gemini
+                </button>
+            </div>
+          </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="gems-modal" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Twoje Gemy</h3>
+        <button id="btn-close-gems" class="close-icon"><i class="fas fa-times"></i></button>
+      </div>
+      
+      <div class="modal-body">
+          <div class="add-template-section">
+            <input type="text" id="gem-name" placeholder="Nazwa, np. Koder Python" autocomplete="off">
+            <input type="text" id="gem-url" placeholder="Link, np. https://gemini.google.com/gem/..." autocomplete="off">
+            <button id="btn-add-gem" class="action-btn">Dodaj Gema</button>
+          </div>
+          <div class="templates-list-container">
+            <ul id="gems-list" class="templates-list-container"></ul>
+          </div>
+      </div>
+      
+      <div class="modal-footer">
+        <span style="font-size: 11px; color: var(--text-muted); text-align: center;">
+            Kliknij prawym na ikonę diamentu w pasku, aby szybko wybierać Gemy.
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <div id="cluster-modal" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3><i class="fas fa-layer-group"></i> Tab Cluster</h3>
+        <button id="btn-close-cluster" class="close-icon"><i class="fas fa-times"></i></button>
+      </div>
+   
+      <div class="modal-body">
+          <div class="add-template-section">
+            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px; line-height: 1.4;">
+              Analizuj treść z wielu otwartych kart jednocześnie. Wtyczka pobierze tekst i utworzy syntezę.
+            </p>
+            
+            <div style="margin-bottom: 15px;">
+                <label style="display:block; color: var(--text-color); margin-bottom: 6px; font-size: 12px; font-weight: 600;">Twój Prompt (Instrukcja):</label>
+                <textarea id="cluster-custom-prompt" placeholder="np. Porównaj parametry techniczne tych urządzeń..." rows="3"></textarea>
+            </div>
+            
+            <label style="display:block; color: var(--text-color); margin-bottom: 6px; font-size: 12px; font-weight: 600;">Wybierz karty:</label>
+            <input type="text" id="cluster-input" placeholder="np. 1, 3, 5 lub 1-3, 5 (Zostaw puste dla wszystkich)" autocomplete="off">
+            <div style="font-size: 10px; color: var(--text-muted); margin-top: 4px;">
+              Numery odpowiadają liście poniżej.
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 15px; margin-top: 15px;">
+                <div id="token-hud-ring" class="token-hud-ring">
+                    <i class="fas fa-microchip"></i> 
+                </div>
+            
+                <div id="token-status-area" style="display: flex; flex-direction: column; font-size: 11px; color: var(--text-muted);">
+                    <span>Zużycie: <strong id="token-usage-count" style="color: var(--primary-color);">0</strong> / 1M</span>
+                    <span id="token-status-text">W normie</span>
+                </div>
+            </div>
+            <div id="cluster-progress-bar" class="progress-container hidden">
+                <div id="progress-fill" class="progress-fill"></div>
+                <span id="progress-text">0/0</span>
+            </div>
+            <div class="variables-legend" style="max-height: 180px; overflow-y: auto; margin-bottom: 15px; border: 1px solid var(--border-color); padding: 8px; border-radius: var(--radius-small); background: #000; margin-top: 15px;">
+               <ul id="cluster-tabs-list" style="list-style: none; padding: 0; margin: 0; font-size: 12px; color: var(--text-muted);">
+                 <li style="padding: 5px; text-align: center;">Ładowanie listy kart...</li>
+               </ul>
+            </div>
+
+            <div style="display: flex; gap: 10px; align-items: center; width: 100%;">
+                <button id="btn-start-cluster" class="action-btn" style="flex-grow: 1;">
+                   Rozpocznij Analizę
+                </button>
+            </div>
+          </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="frame-container">
+    <div class="content-top-bar">
+      <div id="template-dropdown" class="custom-dropdown">
+        <div id="selected-template" class="selected-item" title="Wybierz tryb przetwarzania tekstu">
+          Zwykły (Tekst)
+        </div>
+        <ul id="template-options" class="dropdown-options hidden">
+          </ul>
+      </div>
+
+      <button id="btn-refresh" class="icon-btn" title="Odśwież Gemini">
+        <i class="fas fa-sync-alt"></i>
+      </button>
+    </div>
+
+    <iframe id="gemini-frame" src="https://gemini.google.com/" allow="microphone"></iframe>
+  </div>
+
+  <script type="module" src="sidepanel.js"></script>
+</body>
+</html>

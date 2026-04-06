@@ -1,0 +1,2014 @@
+/* sidepanel.css - Modernizacja UI: Deep Glass & Neon Glow & Feedback + UX Polish */
+
+:root {
+  /* --- PALETA KOLORÓW MODERN --- */
+  --primary-color: #7c4dff;
+  /* Jaśniejszy, bardziej neonowy fiolet */
+  --primary-glow: rgba(124, 77, 255, 0.4);
+  /* Poświata dla akcentów */
+  --primary-hover-color: #651fff;
+
+  --background-color: #050505;
+  /* Prawie czarny, głęboki odcień */
+  --surface-color: rgba(20, 20, 23, 0.7);
+  /* Półprzezroczyste tło dla paneli */
+  --surface-hover: rgba(40, 40, 45, 0.9);
+
+  --input-bg-color: #161618;
+  --border-color: rgba(255, 255, 255, 0.08);
+  /* Bardzo subtelne ramki */
+
+  --text-color: #f0f0f0;
+  --text-muted: #a0a0a0;
+
+  /* --- WYMIARY I STYLE --- */
+  --radius-small: 8px;
+  --radius-medium: 12px;
+  --radius-round: 20px;
+
+  /* ZMIANA: Węższy pasek boczny (Slim) */
+  --sidebar-width-normal: 48px;
+  /* NEW ZEN MODE VAR */
+  --sidebar-width-zen: 6px;
+  /* Zaktualizowano na 6px dla mniejszej widocznej krawędzi */
+  --sidebar-width: var(--sidebar-width-normal);
+  /* UPDATED to use var */
+  --topbar-height: 54px;
+
+  --shadow-soft: 0 4px 12px rgba(0, 0, 0, 0.3);
+  --shadow-neon: 0 0 10px var(--primary-glow);
+
+  --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* ZMIENNE DLA EFEKTÓW */
+  --glow-color: var(--primary-color);
+  /* Domyślny kolor dla aury */
+
+  /* NOWA ZMIENNA: Czas tranzycji dla animacji usuwania */
+  --collapse-duration: 0.35s;
+}
+
+/* --- GLOBALNE --- */
+
+::selection {
+  background-color: var(--primary-color);
+  color: #fff;
+  text-shadow: 0 0 8px var(--primary-glow);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-color);
+}
+
+body,
+html {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  display: flex;
+  flex-direction: row;
+  overflow: hidden;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  /* Dodanie globalnej tranzycji */
+}
+
+/* Glassmorphism 2.0: Efekt odsunięcia tła dla otwartego modala */
+body.modal-open .toolbar,
+body.modal-open .frame-container,
+body.modal-open .content-top-bar {
+  transform: scale(0.95);
+  filter: blur(4px);
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+/* --- PIONOWY PASEK NARZĘDZI (SIDEBAR) --- */
+.toolbar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  width: var(--sidebar-width);
+  height: 100%;
+  padding: 16px 0;
+
+  background-color: var(--surface-color);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-right: 1px solid var(--border-color);
+
+  flex-shrink: 0;
+  box-sizing: border-box;
+  z-index: 20;
+  /* UPDATED for Zen Mode */
+  transition: width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.4s ease;
+  overflow: hidden;
+  /* NEW */
+}
+
+.logo-area {
+  margin-bottom: 20px;
+  color: var(--primary-color);
+  font-size: 18px;
+  filter: drop-shadow(0 0 5px var(--primary-glow));
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.logo-area span {
+  display: none;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+  width: 100%;
+  flex-grow: 1;
+}
+
+/* Separator dla Settings */
+#btn-settings::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 16px;
+  /* Krótsza linia separatora */
+  height: 1px;
+  background-color: var(--border-color);
+}
+
+#btn-detach {
+  margin-top: auto;
+}
+
+/* --- KONTENER TREŚCI --- */
+.frame-container {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  position: relative;
+  background-color: #000;
+  width: calc(100% - var(--sidebar-width));
+  transition: all 0.3s ease;
+  /* Tranzycja dla efektu modal-open */
+}
+
+/* Ambilight Aura (Thinking) */
+.frame-container.thinking {
+  animation: breathing-glow 1.5s infinite alternate;
+}
+
+.frame-container.architect-mode {
+  --glow-color: #FFD700;
+  /* Złoty override */
+}
+
+@keyframes breathing-glow {
+  0% {
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1), 0 0 0 0 rgba(0, 0, 0, 0);
+  }
+
+  100% {
+    box-shadow: inset 0 0 20px var(--glow-color), 0 0 15px var(--glow-color);
+  }
+}
+
+/* --- PASEK GÓRNY (Top Bar) --- */
+.content-top-bar {
+  height: var(--topbar-height);
+
+  background-color: rgba(15, 15, 20, 0.85);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border-color);
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding-left: 16px;
+  padding-right: 50px;
+  position: relative;
+
+  box-sizing: border-box;
+  flex-shrink: 0;
+  z-index: 10;
+  transition: all 0.3s ease;
+  /* Tranzycja dla efektu modal-open */
+}
+
+iframe {
+  border: none;
+  width: 100%;
+  height: 100%;
+  display: block;
+  flex-grow: 1;
+  background: #fff;
+}
+
+/* --- STYLIZACJA WŁASNEGO DROPDOWNA --- */
+
+.custom-dropdown {
+  position: relative;
+  display: inline-block;
+  font-size: 13px;
+  width: 100%;
+  max-width: 260px;
+
+  /* NEW: Blokada zaznaczania tekstu */
+  -webkit-user-select: none;
+  /* Chrome/Safari */
+  user-select: none;
+  /* Standard */
+  cursor: default;
+}
+
+.selected-item {
+  background-color: var(--input-bg-color);
+  color: var(--text-color);
+  border: 1px solid transparent;
+  border-radius: var(--radius-round);
+  padding: 0 16px;
+  height: 38px;
+  line-height: 38px;
+  cursor: pointer;
+  transition: var(--transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+
+  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23a0a0a0%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  background-size: 10px auto;
+  padding-right: 34px;
+}
+
+.selected-item:hover {
+  background-color: #25252a;
+  color: #fff;
+}
+
+.custom-dropdown.active .selected-item {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px var(--primary-glow);
+  background-color: #202025;
+}
+
+.dropdown-options {
+  list-style: none;
+  padding: 6px;
+  margin: 0;
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  z-index: 100;
+
+  background-color: #1a1a1e;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-medium);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+
+  max-height: 300px;
+  overflow-y: auto;
+
+  /* UPDATED: Stan początkowy dla animacji staggered list */
+  opacity: 0;
+  transform: translateY(0);
+  /* Zmieniono, aby animacja Cascade/slideDownFade kontrolowała Y */
+  pointer-events: none;
+  transition: opacity var(--transition-fast);
+}
+
+.custom-dropdown.active .dropdown-options {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.dropdown-options.hidden {
+  display: none;
+}
+
+/* ACTION 3: CASCADE MENU - Keyframes */
+@keyframes slideDownFade {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dropdown-options li {
+  padding: 10px 14px;
+  border-radius: var(--radius-small);
+  cursor: pointer;
+  transition: background-color 0.2s;
+  color: var(--text-muted);
+  margin-bottom: 2px;
+  font-size: 13px;
+
+  /* NEW: Blokada zaznaczania tekstu */
+  -webkit-user-select: none;
+  /* Chrome/Safari */
+  user-select: none;
+  /* Standard */
+
+  /* ACTION 3: CASCADE MENU - Stan początkowy i animacja */
+  opacity: 0;
+  animation: slideDownFade 0.3s forwards;
+}
+
+.custom-dropdown.active .dropdown-options li:nth-child(1) {
+  animation-delay: 0.05s;
+}
+
+.custom-dropdown.active .dropdown-options li:nth-child(2) {
+  animation-delay: 0.10s;
+}
+
+.custom-dropdown.active .dropdown-options li:nth-child(3) {
+  animation-delay: 0.15s;
+}
+
+.custom-dropdown.active .dropdown-options li:nth-child(4) {
+  animation-delay: 0.20s;
+}
+
+.custom-dropdown.active .dropdown-options li:nth-child(5) {
+  animation-delay: 0.25s;
+}
+
+
+.dropdown-options li:hover,
+.dropdown-options li.selected {
+  background-color: var(--primary-color);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* --- PRZYCISKI --- */
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+
+  background-color: transparent;
+  color: var(--text-muted);
+  border: none;
+  border-radius: var(--radius-medium);
+  cursor: pointer;
+
+  font-size: 16px;
+  transition: all var(--transition-fast);
+  position: relative;
+  overflow: hidden;
+  /* Dodane dla efektu ripple */
+}
+
+/* Magnetic Ripple Effect */
+.icon-btn::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  background: radial-gradient(circle, var(--primary-color) 10%, transparent 10.01%);
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 0;
+  transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.6s ease;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.icon-btn:not(:disabled):active::after {
+  transform: translate(-50%, -50%) scale(15);
+  opacity: 0.8;
+  transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.3s ease;
+}
+
+
+.icon-btn:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  transform: scale(1.1);
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+}
+
+.icon-btn:active {
+  transform: scale(0.95);
+}
+
+.toolbar .icon-btn:hover {
+  color: var(--primary-color);
+  background-color: rgba(124, 77, 255, 0.1);
+  box-shadow: var(--shadow-neon);
+  text-shadow: 0 0 5px var(--primary-glow);
+}
+
+/* MEMORY ZONE (Notebook) -> Neon Orange */
+#btn-notebook:hover {
+  color: #ff9100 !important;
+  background-color: rgba(255, 145, 0, 0.1) !important;
+  box-shadow: 0 0 10px rgba(255, 145, 0, 0.4) !important;
+  border-color: rgba(255, 145, 0, 0.3) !important;
+}
+
+/* VISUAL ZONE (Screenshot & Crop) -> Hot Pink */
+#btn-screenshot:hover,
+#btn-crop:hover {
+  color: #f50057 !important;
+  background-color: rgba(245, 0, 87, 0.1) !important;
+  box-shadow: 0 0 10px rgba(245, 0, 87, 0.4) !important;
+  text-shadow: 0 0 5px rgba(245, 0, 87, 0.6) !important;
+  border-color: rgba(245, 0, 87, 0.3) !important;
+}
+
+/* 3. SYSTEM ZONE (Detach, Zen, Settings) -> Cool Silver */
+#btn-detach:hover,
+#btn-zen-mode:hover,
+#btn-settings:hover {
+  color: #eceff1 !important;
+  background-color: rgba(236, 239, 241, 0.1) !important;
+  box-shadow: 0 0 8px rgba(236, 239, 241, 0.3) !important;
+  border-color: rgba(236, 239, 241, 0.2) !important;
+}
+
+/* SPECIFIC STYLE FOR ARCHITECT BUTTON (GOLD) */
+#btn-architect:hover {
+  color: #FFD700 !important;
+  background-color: rgba(255, 215, 0, 0.1) !important;
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.4) !important;
+  text-shadow: 0 0 5px rgba(255, 215, 0, 0.6) !important;
+  border-color: rgba(255, 215, 0, 0.3) !important;
+}
+
+/* SPECIFIC STYLE FOR CLUSTER BUTTON (NEON GREEN) */
+#btn-cluster:hover {
+  color: #00ff9d !important;
+  background-color: rgba(0, 255, 157, 0.1) !important;
+  box-shadow: 0 0 10px rgba(0, 255, 157, 0.4) !important;
+  text-shadow: 0 0 5px rgba(0, 255, 157, 0.6) !important;
+  border-color: rgba(0, 255, 157, 0.3) !important;
+}
+
+/* SPECIFIC STYLE FOR GEMS BUTTON (CYAN) */
+#btn-gems:hover {
+  color: #00e5ff !important;
+  background-color: rgba(0, 229, 255, 0.1) !important;
+  box-shadow: 0 0 10px rgba(0, 229, 255, 0.4) !important;
+}
+
+/* --- BUTTON FEEDBACK ANIMATIONS --- */
+
+.icon-btn.feedback-success {
+  color: var(--primary-color) !important;
+  text-shadow: 0 0 12px var(--primary-glow);
+  border: 1px solid var(--primary-color);
+  background-color: rgba(124, 77, 255, 0.15) !important;
+  transform: scale(1.15);
+  box-shadow: var(--shadow-neon);
+}
+
+.icon-btn.feedback-error {
+  color: #ff4081 !important;
+  text-shadow: 0 0 12px rgba(255, 64, 129, 0.5);
+  border: 1px solid #ff4081;
+  background-color: rgba(255, 64, 129, 0.15) !important;
+  animation: shake 0.4s cubic-bezier(.36, .07, .19, .97) both;
+}
+
+@keyframes shake {
+
+  10%,
+  90% {
+    transform: translate3d(-1px, 0, 0);
+  }
+
+  20%,
+  80% {
+    transform: translate3d(2px, 0, 0);
+  }
+
+  30%,
+  50%,
+  70% {
+    transform: translate3d(-4px, 0, 0);
+  }
+
+  40%,
+  60% {
+    transform: translate3d(4px, 0, 0);
+  }
+}
+
+.icon-btn i {
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.icon-btn.feedback-success i,
+.icon-btn.feedback-error i {
+  transform: scale(1.2);
+}
+
+/* Przycisk Refresh */
+.content-top-bar #btn-refresh {
+  background-color: transparent;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  position: absolute;
+  right: 4px;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+}
+
+.content-top-bar #btn-refresh:hover {
+  background-color: var(--primary-color);
+  color: #fff;
+  transform: rotate(180deg);
+}
+
+/* --- MODAL (Ustawienia) --- */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(5px);
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* ZMIENIONO: Usunięto opacity: 1; transition: opacity 0.3s; */
+  /* NOWE REGUŁY: */
+  transition: opacity 0.3s ease, visibility 0.3s;
+}
+
+/* Smooth Modal Exit */
+.modal.hidden {
+  opacity: 0;
+  visibility: hidden;
+  /* Użyj visibility zamiast display:none */
+  pointer-events: none;
+  /* Kluczowe! */
+  display: flex;
+  /* Zachowaj flex do momentu ukrycia */
+}
+
+/* Smooth Modal Exit - Content Scale */
+.modal-content {
+  background-color: rgba(18, 18, 20, 0.85);
+  /* Bardziej przezroczyste */
+  backdrop-filter: blur(15px);
+  /* Mocniejszy blur */
+  width: 90%;
+  max-width: 380px;
+  max-height: 85vh;
+  border-radius: 16px;
+  border: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.9);
+  /* Mocniejszy cień */
+
+  /* NOWY MODAL ENTRY ANIMATION (Modal Pop - UŻYWAJ NOWEGO KEYFRAMES) */
+  animation: modalPopSpring 0.5s forwards;
+
+  /* NOWY MODAL EXIT TRANSITION (Scale Down + Blur) */
+  transition: transform 0.3s cubic-bezier(0.55, 0.085, 0.68, 0.53), opacity 0.3s ease, filter 0.3s ease;
+}
+
+/* Wymuszenie pełnej wysokości modala notatnika (ACTION 1) */
+#notebook-modal .modal-content {
+  max-width: 500px;
+  height: 90vh;
+  /* Wymuszona wysokość */
+  max-height: 95vh;
+  /* Zwiększony max-height */
+}
+
+
+/* Użycie .modal.hidden dla .modal-content do animacji wyjścia */
+.modal.hidden .modal-content {
+  /* Zmiana: Dodano blur i większe scale przy wyjściu */
+  transform: scale(1.1) translateY(-20px);
+  filter: blur(20px);
+  opacity: 0;
+}
+
+
+/* --- SCROLL WEWNĄTRZ MODALA --- */
+.modal-body {
+  flex-grow: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  /* Wymuszenie flex-container dla body notatnika (ACTION 1) */
+  #notebook-modal & {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    /* Przenosimy scroll do konkretnych sekcji */
+  }
+}
+
+/* ZMIANA: Nowy Keyframes modalPopSpring (Efekt "Spring") */
+@keyframes modalPopSpring {
+  0% {
+    transform: scale(0.8) translateY(20px);
+    opacity: 0;
+  }
+
+  80% {
+    transform: scale(1.03) translateY(-5px);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(1) translateY(0);
+  }
+}
+
+.modal-header {
+  padding: 20px;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: transparent;
+  flex-shrink: 0;
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-color);
+  letter-spacing: 0.5px;
+}
+
+/* ARCHITECT MODAL ICON STYLE */
+#architect-modal .modal-header .fa-star {
+  color: #FFD700;
+  filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.5));
+}
+
+.close-icon {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 18px;
+  transition: 0.2s;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.close-icon:hover {
+  color: #fff;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.add-template-section {
+  padding: 20px;
+  border-bottom: 1px solid var(--border-color);
+  background-color: rgba(255, 255, 255, 0.02);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* NOWY STYL DLA PASKA WYSZUKIWANIA W NOTATNIKU */
+#notebook-modal #notebook-search {
+  background-color: var(--input-bg-color);
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
+  padding: 12px;
+  border-radius: var(--radius-small);
+  font-family: inherit;
+  font-size: 13px;
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
+  transition: 0.2s;
+}
+
+#notebook-modal #notebook-search:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px var(--primary-glow);
+  background-color: #1a1a1d;
+}
+
+/* Nowe style dla sekcji ustawień */
+.input-group {
+  display: flex;
+  gap: 5px;
+  width: 100%;
+}
+
+.textarea-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+/* Specyficzne style dla inputów w sekcji ustawień */
+.add-template-section input,
+.add-template-section textarea,
+.add-template-section select,
+.editor-title-input,
+.editor-textarea {
+  /* DODANO: Nowe pola edytora */
+  background-color: var(--input-bg-color);
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
+  padding: 12px;
+  border-radius: var(--radius-small);
+  font-family: inherit;
+  font-size: 13px;
+  outline: none;
+  resize: none;
+  width: 100%;
+  box-sizing: border-box;
+  transition: 0.2s;
+}
+
+/* ACTION 3: PULSE - Klasa dla aktywnego pisania */
+.typing-active {
+  /* Ustawia stały, pulsujący cień na aktywnym polu tekstowym */
+  border-color: var(--primary-color) !important;
+  box-shadow: 0 0 0 3px var(--primary-glow) !important;
+  animation: digitalPulse 1.5s infinite alternate !important;
+  background-color: #1a1a1d !important;
+}
+
+@keyframes digitalPulse {
+  0% {
+    box-shadow: 0 0 0 3px rgba(124, 77, 255, 0.4);
+  }
+
+  100% {
+    box-shadow: 0 0 8px 3px rgba(124, 77, 255, 0.8);
+  }
+}
+
+/* FORCE HIGH CONTRAST FOR ARCHITECT RESULT */
+#architect-result {
+  color: #ffffff !important;
+  background-color: #0a0a0a !important;
+  /* Slightly darker for contrast */
+  border-color: rgba(255, 215, 0, 0.3) !important;
+  /* Subtle gold border */
+  font-family: 'Consolas', 'Monaco', monospace;
+  /* Monospace for code-like feel */
+  line-height: 1.5;
+}
+
+/* Poprawka dla selecta */
+.add-template-section select {
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23a0a0a0%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 10px auto;
+  padding-right: 30px;
+  cursor: pointer;
+}
+
+.add-template-section input:focus,
+.add-template-section textarea:focus,
+.add-template-section select:focus,
+.editor-title-input:focus,
+.editor-textarea:focus {
+  /* DODANO: Nowe pola edytora */
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px var(--primary-glow);
+  background-color: #1a1a1d;
+}
+
+/* Przycisk Magicznej Różdżki */
+#btn-improve-prompt {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  background-color: rgba(0, 0, 0, 0.6);
+  border: 1px solid var(--border-color);
+  width: 32px;
+  height: 32px;
+  font-size: 14px;
+  z-index: 5;
+  transition: all 0.2s;
+}
+
+#btn-improve-prompt:hover {
+  background-color: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 10px var(--primary-glow);
+}
+
+#btn-improve-prompt:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  filter: grayscale(1);
+}
+
+.action-btn {
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-hover-color));
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: var(--radius-small);
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 4px 10px rgba(124, 77, 255, 0.3);
+  transition: 0.2s;
+}
+
+.action-btn:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 15px rgba(124, 77, 255, 0.5);
+}
+
+.action-btn:active {
+  transform: translateY(1px);
+}
+
+/* GOLD GRADIENT BUTTON FOR ARCHITECT */
+#btn-architect-improve {
+  background: linear-gradient(135deg, #FFD700, #FF8C00) !important;
+  /* Gold to Orange */
+  color: #000 !important;
+  box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+  border: 1px solid rgba(255, 215, 0, 0.2);
+}
+
+#btn-architect-improve:hover {
+  box-shadow: 0 6px 20px rgba(255, 215, 0, 0.5);
+  filter: brightness(1.1);
+}
+
+/* --- LISTA W ŚRODKU MODAL BODY --- */
+.templates-list-container {
+  padding: 10px 20px;
+}
+
+#templates-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+#notebook-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.template-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  background-color: #18181b;
+  border: 1px solid transparent;
+  border-radius: var(--radius-medium);
+  margin-bottom: 8px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  /* DODANE: Stan początkowy dla animacji staggered list */
+  opacity: 0;
+}
+
+.template-item:hover {
+  background-color: #202025;
+  border-color: var(--primary-color);
+  transform: translateX(4px);
+}
+
+.item-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.icon-action-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 6px;
+  color: var(--text-muted);
+  transition: all 0.2s;
+}
+
+.icon-action-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.edit-btn:hover {
+  color: var(--primary-color);
+  background: rgba(124, 77, 255, 0.1);
+}
+
+.delete-btn:hover {
+  color: #ff4d4d;
+  background: rgba(255, 77, 77, 0.1);
+}
+
+.modal-footer {
+  padding: 15px;
+  text-align: center;
+  border-top: 1px solid var(--border-color);
+  background-color: transparent;
+  flex-shrink: 0;
+  /* Stopka nie powinna się kurczyć */
+}
+
+.text-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 12px;
+  transition: 0.2s;
+}
+
+.text-btn:hover {
+  color: #fff;
+  text-decoration: underline;
+}
+
+/* --- TOAST --- */
+#toast-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+  pointer-events: none;
+  width: max-content;
+  max-width: 85%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.toast {
+  background-color: rgba(20, 20, 25, 0.95);
+  backdrop-filter: blur(8px);
+  color: #fff;
+  padding: 16px 24px;
+  border-radius: 16px;
+  border: 1px solid var(--primary-color);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8), 0 0 20px var(--primary-glow);
+  font-size: 14px;
+  font-weight: 500;
+  opacity: 0;
+  transition: opacity 0.3s, transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transform: scale(0.8);
+}
+
+.toast.show {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* --- BUTTON FEEDBACK ANIMATIONS --- (Sekcja skopiowana z powyższej dla kontekstu) */
+
+.icon-btn.feedback-success {
+  color: var(--primary-color) !important;
+  text-shadow: 0 0 12px var(--primary-glow);
+  border: 1px solid var(--primary-color);
+  background-color: rgba(124, 77, 255, 0.15) !important;
+  transform: scale(1.15);
+  box-shadow: var(--shadow-neon);
+}
+
+.icon-btn.feedback-error {
+  color: #ff4081 !important;
+  text-shadow: 0 0 12px rgba(255, 64, 129, 0.5);
+  border: 1px solid #ff4081;
+  background-color: rgba(255, 64, 129, 0.15) !important;
+  animation: shake 0.4s cubic-bezier(.36, .07, .19, .97) both;
+}
+
+/* --- NOTEBOOK / SNAPSHOTS STYLES --- */
+
+.note-item {
+  display: flex;
+  flex-direction: column;
+  /* Stack title and preview */
+  padding: 12px;
+  background-color: #18181b;
+  border: 1px solid transparent;
+  border-radius: var(--radius-medium);
+  margin-bottom: 8px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+  /* DODANE: Stan początkowy dla animacji staggered list */
+  opacity: 0;
+}
+
+.note-item.pinned-note {
+  /* NOWY STYL DLA PRZYPIĘTYCH NOTATEK */
+  border-left: 4px solid #FFD700;
+  background-color: #1a1a14;
+  /* Lekko żółtawe tło */
+  box-shadow: 0 0 5px rgba(255, 215, 0, 0.2);
+}
+
+.note-item:hover {
+  background-color: #202025;
+  border-color: var(--primary-color);
+  transform: translateX(4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.note-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.note-title {
+  font-weight: 600;
+  color: var(--text-color);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 70%;
+}
+
+.note-date {
+  font-size: 10px;
+  color: var(--text-muted);
+  font-family: monospace;
+}
+
+.note-preview {
+  font-size: 11px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.4;
+  /* ZMNIEJSZONO padding-right dla pominięcia przycisku w linii */
+  padding-right: 8px;
+  /* DODANO margin-bottom dla tagów */
+  margin-bottom: 4px;
+}
+
+/* NOWE STYLE DLA TAGÓW */
+.note-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  /* Spacing between tags */
+  margin-top: 4px;
+}
+
+.note-tag {
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--primary-color);
+  /* Użycie primary-color z opacity dla tła */
+  background-color: rgba(124, 77, 255, 0.15);
+  padding: 3px 8px;
+  border-radius: var(--radius-round);
+  /* Bardziej zaokrąglony kształt pastylki */
+  white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: background-color 0.2s;
+
+  /* DODANO NEONOWY AKCENT */
+  box-shadow: 0 0 5px rgba(124, 77, 255, 0.3);
+}
+
+.note-tag:hover {
+  background-color: rgba(124, 77, 255, 0.3);
+}
+
+/* KONIEC NOWYCH STYLÓW DLA TAGÓW */
+
+
+.note-item .delete-btn {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  opacity: 0;
+  transform: scale(0.8);
+  transition: all 0.2s ease;
+}
+
+.note-item:hover .delete-btn {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* --- CLUSTER TABS LIST --- */
+.tab-list-item {
+  display: flex;
+  align-items: center;
+  padding: 6px 8px;
+  border-radius: 4px;
+  transition: background 0.2s;
+  cursor: pointer;
+  /* DODANE: Stan początkowy dla animacji staggered list */
+  opacity: 0;
+}
+
+.tab-list-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.tab-badge {
+  background: rgba(124, 77, 255, 0.2);
+  color: var(--primary-color);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-family: monospace;
+  margin-right: 8px;
+  min-width: 15px;
+  text-align: center;
+}
+
+.tab-info {
+  flex-grow: 1;
+  overflow: hidden;
+}
+
+.tab-title {
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--text-color);
+}
+
+.tab-url {
+  display: block;
+  font-size: 10px;
+  color: var(--text-muted);
+  opacity: 0.7;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* --- TOKEN HUD RING (NOWY WYKRES) --- */
+.token-hud-ring {
+  --size: 40px;
+  --border-width: 5px;
+  --percentage: 0%;
+  /* Zmienna JS */
+  --ring-color: var(--primary-color);
+  --bg-color: #1e1e24;
+
+  width: var(--size);
+  height: var(--size);
+  border-radius: 50%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  /* DODANE: Zarejestrowana właściwość dla płynnej tranzycji gradientu */
+  transition: --percentage 0.5s ease-out;
+
+  background: conic-gradient(var(--ring-color) var(--percentage),
+      var(--bg-color) var(--percentage));
+  transition: background 0.3s;
+
+  /* DODANE: Cień/Poświata wokół pierścienia */
+  box-shadow: 0 0 5px var(--ring-color);
+}
+
+.token-hud-ring::before {
+  /* USUNIĘTO: Pseudo-element wyświetlający tekst procentowy */
+  content: '';
+  position: absolute;
+  width: calc(var(--size) - 2 * var(--border-width));
+  height: calc(var(--size) - 2 * var(--border-width));
+  background: var(--input-bg-color);
+  border-radius: 50%;
+  /* USUNIĘTO: Właściwości tekstu */
+  z-index: 1;
+}
+
+/* NOWOŚĆ: Stylizacja ikony w środku pierścienia */
+.token-hud-ring .fa-microchip {
+  position: absolute;
+  font-size: 18px;
+  color: var(--text-muted);
+  /* Domyślny kolor */
+  z-index: 2;
+  /* Dodajemy subtelne przejście dla koloru, jeśli chcemy, aby pulsował */
+  transition: color 0.3s ease-out;
+}
+
+
+/* Stan Zmęczenia / Przekroczenia */
+.token-hud-ring.warning {
+  --ring-color: #ffaa00;
+  /* Pomarańczowy */
+}
+
+.token-hud-ring.danger {
+  --ring-color: #ff4d4d;
+  /* Czerwony */
+  animation: pulse-ring 0.8s infinite alternate;
+}
+
+@keyframes pulse-ring {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 77, 77, 0.4);
+  }
+
+  100% {
+    box-shadow: 0 0 8px 3px rgba(255, 77, 77, 0.8);
+  }
+}
+
+/* HUD Animation: Pulsowanie pierścienia podczas obliczeń */
+.token-hud-ring.calculating {
+  animation: pulse-border 1s infinite alternate;
+}
+
+@keyframes pulse-border {
+  0% {
+    box-shadow: 0 0 0 0 rgba(124, 77, 255, 0.6), 0 0 0 0 rgba(124, 77, 255, 0.2);
+  }
+
+  100% {
+    box-shadow: 0 0 10px 5px var(--primary-glow), 0 0 20px 10px rgba(124, 77, 255, 0.1);
+  }
+}
+
+/* --- ZEN MODE (Final Polish) --- */
+
+/* 1. Kontener treści zajmuje CAŁĄ szerokość (brak paska obok) */
+body.zen-mode .frame-container {
+  width: 100% !important;
+  margin-left: 0 !important;
+}
+
+/* 2. Pasek boczny w stanie spoczynku (Niewidzialna strefa detekcji) */
+body.zen-mode .toolbar {
+  position: fixed !important;
+  /* Wyjęcie z przepływu dokumentu */
+  left: 0;
+  top: 0;
+  height: 100%;
+
+  width: 15px !important;
+  /* Szersza strefa detekcji dla wygody */
+  opacity: 0 !important;
+  /* Całkowicie niewidoczny wizualnie */
+  background: transparent !important;
+  border: none !important;
+
+  z-index: 9999;
+  /* Musi być NA WIERZCHU, żeby łapać myszkę */
+  /* ZMIANA: Wydłużony czas dla efektu "Slow Fade Out" */
+  transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 3. Pasek boczny po najechaniu (Pełny widok) */
+body.zen-mode .toolbar:hover {
+  width: var(--sidebar-width) !important;
+  opacity: 1 !important;
+
+  background-color: var(--surface-color) !important;
+  backdrop-filter: blur(12px);
+  border-right: 1px solid var(--border-color) !important;
+  box-shadow: 10px 0 30px rgba(0, 0, 0, 0.5);
+
+  /* Utrzymujemy fixed, żeby nie przesuwał treści przy otwieraniu */
+  position: fixed !important;
+  overflow: visible !important;
+
+  /* ZMIANA: Szybki czas dla efektu "Snappy Fade In" */
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* DODANO: 3b. Nadpisanie dla paska narzędzi, który ma być widoczny w Zen Mode */
+body.zen-mode .toolbar.force-visible {
+  width: var(--sidebar-width) !important;
+  opacity: 1 !important;
+  background-color: var(--surface-color) !important;
+  border-right: 1px solid var(--border-color) !important;
+}
+
+/* NOWE REGUŁY DLA GÓRNEGO PASKA W TRYBIE ZEN */
+
+/* 4. Pasek górny w stanie spoczynku (Strefa detekcji 10px) */
+body.zen-mode .content-top-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+
+  z-index: 50;
+  /* Nad iframe, ale pod modalem */
+
+  opacity: 0;
+  backdrop-filter: none;
+  /* Wyłącz filtr w spoczynku dla wydajności */
+
+  height: 10px;
+  /* Niewidoczna strefa detekcji */
+  overflow: hidden;
+  /* Ukryj zawartość (dropdown) */
+
+  /* Slow fade out */
+  transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 5. Pasek górny po najechaniu (Pełny widok) */
+body.zen-mode .content-top-bar:hover {
+  opacity: 1;
+  height: var(--topbar-height);
+  /* Pełna wysokość */
+  backdrop-filter: blur(10px);
+  /* Przywróć efekt szkła */
+  overflow: visible;
+  /* Pokaż zawartość (dropdown) */
+
+  /* Snappy fade in */
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 6. NOWA KLASA: Przypięcie górnego paska w Zen Mode */
+body.zen-mode .content-top-bar.locked {
+  opacity: 1 !important;
+  height: var(--topbar-height) !important;
+  backdrop-filter: blur(10px) !important;
+  overflow: visible !important;
+  position: sticky; /* Zapewnia, że pozostaje na górze, jeśli jest scrollable (choć całe body nie jest) */
+  top: 0;
+}
+
+
+/* --- MICRO-INTERACTIONS --- */
+/* General inputs inside modals for consistent focus effect */
+.modal-body input:focus,
+.modal-body textarea:focus,
+.modal-body select:focus,
+.editor-title-input:focus,
+.editor-textarea:focus {
+  transform: scale(1.01);
+  background-color: #1a1a1e;
+  border-color: var(--primary-color);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), 0 0 0 1px var(--primary-color);
+}
+
+/* 1. Staggered List Animation Keyframes */
+@keyframes slideInFade {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 1. Staggered List Animation Application */
+.template-item,
+.note-item,
+.tab-list-item {
+  animation: slideInFade 0.4s ease-out forwards;
+  opacity: 0;
+}
+
+/* 1. Staggered List Animation Delay (do 5 elementów) */
+.template-item:nth-child(1),
+.note-item:nth-child(1),
+.tab-list-item:nth-child(1) {
+  animation-delay: 0.05s;
+}
+
+.template-item:nth-child(2),
+.note-item:nth-child(2),
+.tab-list-item:nth-child(2) {
+  animation-delay: 0.10s;
+}
+
+.template-item:nth-child(3),
+.note-item:nth-child(3),
+.tab-list-item:nth-child(3) {
+  animation-delay: 0.15s;
+}
+
+.template-item:nth-child(4),
+.note-item:nth-child(4),
+.tab-list-item:nth-child(4) {
+  animation-delay: 0.20s;
+}
+
+.template-item:nth-child(5),
+.note-item:nth-child(5),
+.tab-list-item:nth-child(5) {
+  animation-delay: 0.25s;
+}
+
+/* 3. Token HUD Animation Property Registration */
+@property --percentage {
+  syntax: '<percentage>';
+  inherits: false;
+  initial-value: 0%;
+}
+
+/* ========================================= */
+/* NOWE KLASY DLA WIZUALNYCH USPRAWNIEŃ */
+/* ========================================= */
+
+/* 1. Smooth Collapse (Dla usuwania elementów z listy) */
+.list-item-collapsing {
+  /* Ustawienie zerowej wysokości i opacity, aby rozpocząć zanikanie/składanie */
+  height: 0 !important;
+  opacity: 0 !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  transform: translateX(10px);
+  overflow: hidden;
+
+  /* Przejście dla wszystkich relevantnych właściwości */
+  transition:
+    height var(--collapse-duration) ease-in-out,
+    opacity var(--collapse-duration) ease-in-out,
+    margin var(--collapse-duration) ease-in-out,
+    padding var(--collapse-duration) ease-in-out,
+    transform var(--collapse-duration) ease-in-out;
+}
+
+/* DODANO: Animacja wstawiania nowego elementu listy (Notebook, Templates) */
+@keyframes insertItem {
+  0% {
+    transform: scaleY(0.5) translateX(-20px);
+    opacity: 0;
+  }
+
+  100% {
+    transform: scaleY(1) translateX(0);
+    opacity: 1;
+  }
+}
+
+.list-item-new {
+  transform-origin: top;
+  /* Animuj od góry */
+  animation: insertItem 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+/* DODANO: Keyframes dla efektu myślenia w polu tekstowym (Brain Waves) */
+@keyframes brainWaves {
+  0% {
+    background-color: var(--input-bg-color);
+  }
+
+  50% {
+    background-color: rgba(124, 77, 255, 0.15);
+  }
+
+  100% {
+    background-color: var(--input-bg-color);
+  }
+}
+
+/* DODANO: Klasa dla pola, gdy AI przetwarza dane */
+.ai-processing {
+  animation: brainWaves 2s ease-in-out infinite alternate;
+}
+
+/* 2. Skeleton Screen (Dla ładowania) */
+@keyframes shimmer {
+  0% {
+    background-position: -400px 0;
+  }
+
+  100% {
+    background-position: 400px 0;
+  }
+}
+
+.skeleton-item {
+  background-color: #202025;
+  border: 1px solid #303035;
+  border-radius: var(--radius-medium);
+  margin-bottom: 8px;
+  padding: 12px;
+  height: 40px;
+  /* Stała wysokość na czas ładowania */
+
+  /* Efekt Shimmer (Przesuwający się gradient) */
+  background-image: linear-gradient(to right,
+      #202025 0%,
+      rgba(124, 77, 255, 0.05) 20%,
+      /* Lekka poświata */
+      #202025 40%);
+  background-size: 800px 100%;
+  animation: shimmer 1.5s infinite linear;
+}
+
+/* 3. Progress Bar (Dla Tab Cluster) */
+.progress-container {
+  height: 24px;
+  background-color: #121215;
+  border-radius: var(--radius-small);
+  overflow: hidden;
+  margin-bottom: 15px;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.progress-fill {
+  height: 100%;
+  width: 0%;
+  background-color: var(--primary-color);
+  /* Zmieniono na płynną tranzycję */
+  transition: width 0.4s ease-out;
+  position: absolute;
+  left: 0;
+  top: 0;
+
+  /* NEON GLOW */
+  box-shadow: 0 0 10px rgba(124, 77, 255, 0.6);
+  background: linear-gradient(90deg, #5e35b1, var(--primary-color));
+}
+
+.progress-container span {
+  position: relative;
+  z-index: 2;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  text-align: center;
+  width: 100%;
+  text-shadow: 0 0 4px #000;
+}
+
+/* ========================================= */
+/* NOWE STYLE DLA WIDOKU EDYTORA NOTATNIKA */
+/* ========================================= */
+
+#notebook-list-view,
+#notebook-editor-view {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  height: 100%;
+  display: flex;
+  /* Przechodzi na flex, gdy nie jest ukryty */
+  flex-direction: column;
+  flex: 1;
+  /* ACTION 1: Wymuś bycie flex itemem w modal-body */
+  min-height: 0;
+  /* ACTION 1: Kluczowe dla scrollowania w flexie */
+}
+
+/* Płynne przejście między widokami */
+#notebook-list-view.hidden,
+#notebook-editor-view.hidden {
+  opacity: 0;
+  transform: translateX(100%);
+  pointer-events: none;
+  display: none !important;
+  /* Wymuś display:none */
+}
+
+/* Ustawienie początkowe dla widoku edytora (pojawienie się z prawej) */
+#notebook-editor-view {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  box-sizing: border-box;
+  padding-bottom: 50px;
+  /* Dodatkowe padding na dole dla action-bar */
+}
+
+#notebook-list-view {
+  /* Ustawienie, aby lista była widoczna i skalowana do 100% */
+  transform: translateX(0);
+  opacity: 1;
+}
+
+/* Pasek narzędzi w edytorze */
+.editor-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px 10px 20px;
+  border-bottom: 1px solid var(--border-color);
+  flex-shrink: 0;
+}
+
+/* Przycisk wracania (zmniejsz rozmiar) */
+#btn-editor-back {
+  font-size: 16px;
+  padding: 6px;
+  color: var(--primary-color);
+  background-color: rgba(124, 77, 255, 0.1);
+}
+
+#btn-editor-back:hover {
+  background-color: rgba(124, 77, 255, 0.2);
+}
+
+/* Przycisk pinezki */
+#btn-toggle-pin {
+  font-size: 16px;
+  padding: 6px;
+  color: var(--text-muted);
+}
+
+#btn-toggle-pin:hover {
+  color: #FFD700;
+  background-color: rgba(255, 215, 0, 0.1);
+}
+
+#btn-toggle-pin.active {
+  color: #FFD700;
+  background-color: rgba(255, 215, 0, 0.2);
+  box-shadow: 0 0 8px rgba(255, 215, 0, 0.4);
+}
+
+/* Kontener treści edytora (elastyczny) */
+.editor-content-area {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  /* ACTION 1: Pozwala na zajęcie reszty miejsca */
+  min-height: 0;
+  padding-bottom: 60px;
+  /* ACTION 1: Miejsce na pasek akcji na dole */
+}
+
+/* Pole tytułu */
+.editor-title-input {
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  /* Usuń ramkę */
+  border-bottom: 1px solid var(--border-color);
+  padding: 10px 0;
+  margin-bottom: 15px;
+
+  /* ACTION 1: Dodanie tła, by sugerować edycję */
+  background-color: rgba(255, 255, 255, 0.03);
+
+  border-radius: var(--radius-small);
+  /* Dodaj lekki border-radius */
+  padding-left: 10px;
+  /* Dodaj padding wewnętrzny */
+  padding-right: 10px;
+}
+
+.editor-title-input:focus {
+  border-bottom-color: var(--primary-color);
+  box-shadow: 0 0 0 1px var(--primary-color) !important;
+  transform: none !important;
+  background-color: #1a1a1d !important;
+  border-radius: var(--radius-small);
+}
+
+/* Kontener tabulatorów */
+.editor-tab-container {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  /* ACTION 1: Wymuś zajęcie całej przestrzeni */
+  min-height: 0;
+}
+
+.tab-button-group {
+  display: flex;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 10px;
+  flex-shrink: 0;
+}
+
+.tab-button {
+  background: transparent;
+  border: none;
+  padding: 8px 15px;
+  cursor: pointer;
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 500;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+}
+
+.tab-button.active {
+  color: var(--primary-color);
+  border-bottom-color: var(--primary-color);
+  font-weight: 600;
+}
+
+.tab-button:hover {
+  color: var(--text-color);
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Pole tekstowe edytora */
+.editor-textarea {
+  flex-grow: 1;
+  /* ACTION 1: Zajmuje całą dostępną przestrzeń */
+  height: 100%;
+  /* ACTION 1: Wymuś wysokość 100% wewnątrz flexa */
+  resize: none;
+  /* ACTION 1: Wyłącz resize */
+  min-height: 150px;
+  border-radius: var(--radius-small);
+  border: 1px solid var(--border-color);
+  padding: 12px;
+  font-family: inherit;
+  font-size: 13px;
+  background-color: var(--input-bg-color);
+}
+
+/* Podgląd Markdown */
+.markdown-preview {
+  flex-grow: 1;
+  height: 100%;
+  /* ACTION 1: Wymuś wysokość 100% wewnątrz flexa */
+  overflow-y: auto;
+  padding: 12px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-small);
+  background-color: var(--input-bg-color);
+  color: var(--text-color);
+
+  line-height: 1.6;
+}
+
+.markdown-preview h1,
+.markdown-preview h2,
+.markdown-preview h3 {
+  color: var(--primary-color);
+  margin-top: 10px;
+  margin-bottom: 5px;
+  font-weight: 700;
+  padding-bottom: 2px;
+  border-bottom: 1px dotted rgba(124, 77, 255, 0.2);
+}
+
+.markdown-preview h1 {
+  font-size: 1.5em;
+}
+
+.markdown-preview h2 {
+  font-size: 1.3em;
+}
+
+.markdown-preview h3 {
+  font-size: 1.1em;
+}
+
+/* Używamy h3 dla # Header */
+
+.markdown-preview b,
+.markdown-preview strong {
+  color: #FFD700;
+  font-weight: 700;
+}
+
+.markdown-preview i,
+.markdown-preview em {
+  color: #8be9fd;
+  font-style: italic;
+}
+
+.markdown-preview ul {
+  list-style-type: none;
+  /* Zmieniamy na własny styl */
+  padding-left: 15px;
+  margin: 8px 0;
+}
+
+.markdown-preview li {
+  position: relative;
+  margin-bottom: 4px;
+  padding-left: 10px;
+  font-size: 13px;
+}
+
+.markdown-preview li::before {
+  content: '•';
+  /* Używamy kropki */
+  color: var(--primary-color);
+  position: absolute;
+  left: 0;
+}
+
+.markdown-preview code {
+  background-color: #2a2a2e;
+  color: #a0a0a0;
+  padding: 2px 4px;
+  border-radius: 4px;
+  font-family: 'Consolas', monospace;
+  font-size: 0.9em;
+}
+
+
+/* Pasek akcji edytora (na dole) */
+.editor-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 10px 20px;
+  border-top: 1px solid var(--border-color);
+  flex-shrink: 0;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(18, 18, 20, 0.9);
+  backdrop-filter: blur(5px);
+}
+
+/* Resetowanie style'u dla sekcji dodawania notatek w widoku listy */
+#notebook-list-view .add-template-section {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+#notebook-list-view .add-template-section:nth-child(2) {
+  border-top: none;
+  /* Usuń górną ramkę z sekcji wyszukiwania */
+}
+
+/* Ukrywanie/Pokazywanie stopki modala */
+#notebook-footer-list,
+#notebook-footer-editor {
+  transition: opacity 0.3s ease;
+}
+
+/* Utility Class */
+.hidden {
+  display: none !important;
+}
+
+/* --- FIX: Layout Collisions in Notebook Editor Mode --- */
+
+/* 1. Ukryj ikonę 'X' (Zamknij) w trybie edycji, aby nie nachodziła na Pinezkę */
+#notebook-modal.view-editor .modal-header .close-icon {
+  display: none;
+}
+
+/* 2. Przesuń tytuł w prawo w trybie edycji, aby nie nachodził na Strzałkę Cofania */
+#notebook-modal.view-editor .modal-header h3 {
+  /* Przesunięcie o 40px w prawo (miejsce na strzałkę) */
+  padding-left: 40px;
+  transition: padding-left 0.3s ease;
+}
+
+/* Opcjonalnie: Jeśli tytuł jest bardzo długi, upewnij się, że się nie łamie brzydko */
+#notebook-modal .modal-header h3 {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: padding-left 0.3s ease;
+}
+
+/* --- CUSTOM CONTEXT MENU (Right Click) --- */
+.custom-context-menu {
+  position: fixed;
+  z-index: 99999;
+  background-color: #1a1a1e;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-medium);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), 0 0 10px var(--primary-glow);
+  padding: 6px;
+  min-width: 180px;
+
+  /* Animacja pojawiania się */
+  opacity: 0;
+  transform: scale(0.95);
+  animation: contextMenuFadeIn 0.2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+@keyframes contextMenuFadeIn {
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.custom-context-menu ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.custom-context-menu li {
+  padding: 10px 14px;
+  border-radius: var(--radius-small);
+  cursor: pointer;
+  color: var(--text-muted);
+  font-size: 13px;
+  transition: background-color 0.2s, color 0.2s;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.custom-context-menu li:hover {
+  background-color: var(--primary-color);
+  color: #fff;
+}
+
+.custom-context-menu li.active-template {
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+.custom-context-menu li.active-template:hover {
+  color: #fff;
+}
+
+/* --- FIX: Notebook List Scroll & Padding --- */
+
+/* 1. Umożliwienie przewijania kontenera listy wewnątrz zablokowanego body */
+#notebook-list-view .templates-list-container {
+  flex-grow: 1;
+  /* Zajmij całą wolną przestrzeń pod wyszukiwarką */
+  overflow-y: auto;
+  /* Włącz przewijanie wewnątrz tego elementu */
+  min-height: 0;
+  /* Fix dla Flexboxa */
+  padding-bottom: 10px;
+  /* Lekki odstęp kontenera */
+}
+
+/* 2. Dodatkowy padding na dole listy, aby ostatni element nie był ucięty przez stopkę */
+#notebook-list {
+  padding-bottom: 60px;
+  /* Duży margines bezpieczeństwa na dole */
+}
