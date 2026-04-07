@@ -8,7 +8,7 @@
 
 Zaawansowane rozszerzenie przeglądarki działające w panelu bocznym (Side Panel), zaprojektowane w celu maksymalnej optymalizacji pracy z modelami LLM. Pozwala na błyskawiczne zarządzanie kontekstem z przeglądanych stron i automatyzację wprowadzania promptów.
 
-> **Wskazówka:** Projekt idealnie wpisuje się w automatyzację procesów biurowych – pozwala m.in. na szybkie podsumowywanie maili, analizę otwartych kart i wyciąganie kluczowych danych (np. logistycznych) bez przełączania okien.
+> Projekt idealnie wpisuje się w automatyzację procesów biurowych – pozwala m.in. na szybkie podsumowywanie maili, analizę otwartych kart i wyciąganie kluczowych danych (np. logistycznych) bez przełączania okien.
 
 ## ✨ Główne funkcje
 
